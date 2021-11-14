@@ -1,16 +1,24 @@
+import { Navbar, Page } from 'decentraland-ui'
 import React from 'react'
-
-import { Counter } from './features/counter/Counter'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Challenge from './features/challenge'
+import Web3Provider from './providers/web3Provider'
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <Counter />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-      </header>
+      <div className="Navbar-story-container">
+        <Navbar isFullscreen mana={100} />
+        <Page>
+          <Web3Provider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Challenge />} />
+              </Routes>
+            </BrowserRouter>
+          </Web3Provider>
+        </Page>
+      </div>
     </div>
   )
 }
