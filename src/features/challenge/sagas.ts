@@ -2,13 +2,16 @@ import { call, put, takeLatest, takeEvery, select, SagaReturnType } from 'redux-
 import { getTokenBalance, transferToken } from '../../utils/contracts/token'
 import { fetchWalletAction, selectWalletByAddress, setWallet, transferAction } from './walletsSlice'
 
-function* fetchWallet(action: ReturnType<typeof fetchWalletAction>): any {
+function* fetchWallet(action: ReturnType<typeof fetchWalletAction>) {
   const address = action.payload.address
 
   yield put({ type: setWallet.toString(), payload: { address, status: 'pending' } })
 
   try {
-    const balance = yield call(() => getTokenBalance(address))
+    const balance: SagaReturnType<typeof getTokenBalance> = yield call(() =>
+      getTokenBalance(address),
+    )
+
     yield put({
       type: setWallet.toString(),
       payload: { address, status: 'idle', balance: balance.toNumber() },
@@ -22,16 +25,20 @@ function* fetchWallet(action: ReturnType<typeof fetchWalletAction>): any {
   }
 }
 
-function* transfer(action: ReturnType<typeof transferAction>): any {
+function* transfer(action: ReturnType<typeof transferAction>) {
   const from = action.payload.from
   const to = action.payload.to
   const amount = action.payload.amount
 
-  const walletState = yield select((state) => selectWalletByAddress(state, from))
+  const walletState: SagaReturnType<typeof selectWalletByAddress> = yield select((state) =>
+    selectWalletByAddress(state, from),
+  )
   yield put({ type: setWallet.toString(), payload: { ...walletState, status: 'pending' } })
 
   try {
-    const receipt = yield call(() => transferToken(to, amount))
+    const receipt: SagaReturnType<typeof transferToken> = yield call(() =>
+      transferToken(to, amount),
+    )
     yield call(() => receipt.wait())
     yield put({
       type: fetchWalletAction.toString(),
