@@ -1,12 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useEthers } from '@usedapp/core'
+import { Button, Segment, Header, Address, Blockie } from 'decentraland-ui'
 
 import { useAppDispatch, useAppSelector } from '../../hooks/redux'
 import ConnectButton from '../../components/ConnectButton'
-import { fetchWalletAction, transferAction, selectWalletByAddress } from './walletsSlice'
+import { fetchWalletAction, selectWalletByAddress } from './walletsSlice'
+import TransferModal from './TransferModal'
 
 export default function Challenge() {
   const { account, library } = useEthers()
+  const [isOpen, setIsOpen] = useState(false)
   const dispatch = useAppDispatch()
   const wallet = useAppSelector((state) => selectWalletByAddress(state, account || ''))
 
@@ -21,27 +24,22 @@ export default function Challenge() {
   }
 
   return (
-    <div>
-      <h1>Challenge</h1>
-      <div>address: {wallet?.address}</div>
-      <div>
-        balance: {wallet?.status === 'pending' ? 'loading...' : wallet?.balance?.toString()}
+    <Segment style={{ width: 400 }}>
+      <Header>Wallet</Header>
+      <p>
+        <Blockie scale={3} seed={wallet?.address || ''}>
+          <Address value={wallet?.address || ''} strong />
+        </Blockie>
+        .
+      </p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <p>balance: {wallet?.balance?.toString()}</p>
+        <Button basic onClick={() => setIsOpen(true)}>
+          transfer
+        </Button>
       </div>
 
-      <button
-        aria-label="Increment value"
-        onClick={() =>
-          dispatch(
-            transferAction({
-              from: account,
-              to: '0x76d88fb4fcb39B4b895Bfc4df0dCa252b9C7DC6B',
-              amount: 1,
-            }),
-          )
-        }
-      >
-        transfer
-      </button>
-    </div>
+      {isOpen && <TransferModal onClose={() => setIsOpen(false)} />}
+    </Segment>
   )
 }

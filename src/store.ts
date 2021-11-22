@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 import createSagaMiddleware from 'redux-saga'
 
-import walletReducer, { saga } from './features/challenge/walletsSlice'
+import walletReducer from './features/challenge/walletsSlice'
+import sagaChallenge from './features/challenge/sagas'
 
 export const sagaMiddleware = createSagaMiddleware()
 
@@ -12,13 +13,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) => [...getDefaultMiddleware({ thunk: false }), sagaMiddleware],
 })
 
-sagaMiddleware.run(saga)
+sagaMiddleware.run(sagaChallenge)
 
 export type AppDispatch = typeof store.dispatch
 export type RootState = ReturnType<typeof store.getState>
-// export type AppThunk<ReturnType = void> = ThunkAction<
-//   ReturnType,
-//   RootState,
-//   unknown,
-//   Action<string>
-// >
