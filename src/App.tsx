@@ -4,13 +4,16 @@ import { ChainId, DAppProvider, Config } from '@usedapp/core'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import NoMetaMask from './components/NoMetaMask'
 import WrongNetwork from './containers/WrongNetwork'
+import SetProvider from './containers/SetProvider'
 import Challenge from './features/challenge'
-import { DEFAULT_APP_CHAIN_ID, DEFAULT_INFURA_URL } from './constants'
+import { DEFAULT_APP_CHAIN_ID } from './constants'
+import { getChainConfig } from './constants/chains'
 
+const chainConfig = getChainConfig(DEFAULT_APP_CHAIN_ID)
 const config: Config = {
   readOnlyChainId: DEFAULT_APP_CHAIN_ID,
   readOnlyUrls: {
-    [ChainId.Kovan]: DEFAULT_INFURA_URL,
+    [ChainId.Kovan]: chainConfig.rpcUrl,
   },
 }
 
@@ -23,12 +26,13 @@ function App() {
           <Center>
             {window.ethereum ? (
               <DAppProvider config={config}>
+                <WrongNetwork />
+                <SetProvider />
                 <BrowserRouter>
                   <Routes>
                     <Route path="/" element={<Challenge />} />
                   </Routes>
                 </BrowserRouter>
-                <WrongNetwork />
               </DAppProvider>
             ) : (
               <NoMetaMask />
