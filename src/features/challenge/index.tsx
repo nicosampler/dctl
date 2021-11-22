@@ -30,7 +30,6 @@ export default function Challenge() {
         <Blockie scale={3} seed={wallet?.address || ''}>
           <Address value={wallet?.address || ''} strong />
         </Blockie>
-        .
       </p>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <p>balance: {wallet?.balance?.toString()}</p>
